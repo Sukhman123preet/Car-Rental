@@ -84,7 +84,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="w-full px-3 flex-1">
+      <nav className="w-full lg:px-3 flex-1  ">
         <div className="space-y-2">
           {ownerMenuLinks.map((link, index) => (
             <NavLink
