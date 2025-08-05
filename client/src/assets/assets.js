@@ -1,4 +1,5 @@
 import logo from "./logo.svg";
+import dummyuser from "./dummyuser.webp"
 import gmail_logo from "./gmail_logo.svg";
 import facebook_logo from "./facebook_logo.svg";
 import instagram_logo from "./instagram_logo.svg";
@@ -45,6 +46,7 @@ export const cityList = ['Chandigarh', 'Jalandhar', 'Hoshiarpur', 'New Delhi', '
 
 export const assets = {
     logo,
+    dummyuser,
     gmail_logo,
     facebook_logo,
     instagram_logo,

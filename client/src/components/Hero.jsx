@@ -1,12 +1,17 @@
 import React from "react";
 import { useState } from 'react';
 import { assets, menuLinks, cityList } from '../assets/assets';
-
+import { useAppContext } from "../context/AppContext";
 const Hero = () => {
     const [pickupLocation, setPickupLocation] = useState('');
     const [pickupDate, setPickupDate] = useState('');
     const [returnDate, setReturnDate] = useState('');
-    
+    const {navigate} =useAppContext()
+
+    const handleSearch =(e)=>{
+        e.preventDefault()
+        navigate('/cars?pickupLocation='+pickupLocation+'&pickupDate='+pickupDate+'&returnDate='+returnDate)
+    }
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen gap-8 md:gap-14  text-center px-4 py-8 overflow-hidden ">
             {/* Background SVG Elements */}
@@ -109,7 +114,9 @@ const Hero = () => {
                         </div>
 
                         {/* Enhanced Search Button */}
-                        <button
+                        <button onClick={(e)=>{
+                            handleSearch(e);
+                        }}
                             type="submit"
                             className="relative flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl w-full md:w-auto md:mt-6 group overflow-hidden"
                         >

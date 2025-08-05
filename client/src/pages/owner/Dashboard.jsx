@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { assets, dummyDashboardData, ownerMenuLinks } from '../../assets/assets';
 import Title from '../../components/owner/Title';
+import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
-const currency = import.meta.env.currency || '₹';
 
 const DashBoard = () => {
+    const {axios,isOwner}=useAppContext()
+    const currency = import.meta.env.currency || '₹';
+    
     const [data, setData] = useState({
         totalCars: 0,
         totalBookings: 0,
@@ -20,14 +24,30 @@ const DashBoard = () => {
     const [loading, setLoading] = useState(true);
     const [animateCards, setAnimateCards] = useState(false);
 
+    const fetchDashboardData=async()=>{
+        try{
+            const {data}=await axios.get('/api/owner/dashboard')
+
+             setData(data.dashboardData);
+             
+             toast.success(data.message)
+
+        }
+        catch(err){
+            toast.error(err.message)
+        }
+    }
+
     useEffect(() => {
         // Simulate loading
         setTimeout(() => {
-            setData(dummyDashboardData);
+            if(isOwner)
+            fetchDashboardData()
             setLoading(false);
             setAnimateCards(true);
+           
         }, 800);
-    }, []);
+    }, [isOwner]);
 
     const dashboardCards = [
         { 

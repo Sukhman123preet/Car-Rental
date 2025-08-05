@@ -1,10 +1,34 @@
 import React from "react";
-
-const Login = ({ setShowLogin }) => {
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
+const Login = () => {
+    const navigate = useNavigate();
+    const {setShowLogin,axios,setToken}=useAppContext();
     const [state, setState] = React.useState("login");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const onSubmitHandler=async (event)=>{
+        try{
+            event.preventDefault();
+            const {data}=await axios.post(`api/user/${state}`,{name,email,password})
+            
+            if(data.success){
+                navigate('/')
+                setToken(data.token)
+                localStorage.setItem('token',data.token)
+                setShowLogin(false)
+                
+            }
+            else{
+                toast.error(data.message)
+            }
+        }
+        catch(error){
+            toast.error(error.message)
+        }
+    }
 
     return (
         <>
@@ -15,7 +39,7 @@ const Login = ({ setShowLogin }) => {
             />
 
             {/* Login/Register Form */}
-            <form onClick={(e)=>e.stopPropagation()} className="fixed z-[101] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white ">
+            <form  onSubmit={onSubmitHandler} onClick={(e)=>e.stopPropagation()} className="fixed z-[101] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white ">
                 <p className="text-2xl font-medium m-auto">
                     <span className="text-blue-600">User</span> {state === "login" ? "Login" : "Sign Up"}
                 </p>

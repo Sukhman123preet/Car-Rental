@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { assets, dummyCarData, dummyMyBookingsData } from '../assets/assets';
 import Title from '../components/Title';
-import { Currency } from 'lucide-react';
+import { AppContext, useAppContext } from '../context/AppContext';
+import toast from 'react-hot-toast';
 
 const MyBookings = () => {
+  const {axios,user}=useAppContext()
   const [bookings, setBookings] = useState([]);
-
+  
   const fetchMyBookings = async () => {
-    // Simulate API call using dummy data
-    setBookings(dummyMyBookingsData);
+    try{
+      const {data} =await axios.get('api/bookings/user')
+      if(data.success){
+        setBookings(data.bookings)
+      }
+      else{
+        toast.error(data.message);
+      }
+    }
+    catch(e){
+      toast.error(e.message);
+    }
   };
 
   useEffect(() => {
-    fetchMyBookings();
-  }, []);
-const currency = import.meta.env.currency || '₹';
+   user && fetchMyBookings();
+  }, [user]);
+const currency = import.meta.env.VITE_CURRENCY;
   return (
     <div className='px-6 md:px-26 lg:px-24 xl:px-32 2xl:px-48 mt-16 text-sm max-w-7xl'>
       <Title title='My Bookings' subTitle='Manage your car bookings here' align='left' />

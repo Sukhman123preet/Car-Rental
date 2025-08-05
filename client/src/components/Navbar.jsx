@@ -1,14 +1,39 @@
 import React, { useState } from 'react';
 import { assets, menuLinks } from '../assets/assets';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
+import { toast } from 'react-hot-toast'; // ✅ Needed for toast
 
-const Navbar = ({ setShowLogin }) => {
-    const location = useLocation();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const navigate = useNavigate();
+const Navbar = () => {
+  const {
+    setShowLogin,
+    user,
+    logout,
+    isOwner,
+    axios,
+    setIsOwner,
+  } = useAppContext(); // ✅ Hook is called here
 
-    // Utility for active link
-    const isActive = (path) => location.pathname === path;
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const isActive = (path) => location.pathname === path;
+
+  const changeRole = async () => {
+    try {
+      const { data } = await axios.post('/api/owner/change-role');
+      if (data.success) {
+        setIsOwner(true);
+        toast.success(data.message);
+      } else {
+        
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
     return (
         <nav
@@ -90,7 +115,9 @@ const Navbar = ({ setShowLogin }) => {
                     {/* Dashboard Button */}
                     <button
                         onClick={() => {
-                            navigate('/owner');
+                            isOwner?
+                            navigate('/owner'):
+                            changeRole()
                             setIsMenuOpen(false);
                         }}
                         className="px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-800
@@ -99,22 +126,22 @@ const Navbar = ({ setShowLogin }) => {
       focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2
       active:scale-95"
                     >
-                        Dashboard
+                    {isOwner?    'Dashboard':'List cars'}
                     </button>
 
                     {/* Login Button */}
                     <button
                         onClick={() => {
-                            setShowLogin(true);
+user?logout()    :                        setShowLogin(true);
                             setIsMenuOpen(false);
-                        }}
+                         }}
                         className="px-6 py-2 rounded-full font-medium bg-blue-600 text-white
       shadow-sm transition-all duration-200 ease-in-out
       hover:bg-primary/10 hover:text-primary hover:shadow-[0px_0px_10px_1px_rgba(37,_99,_235,_.8)]
       focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2
       active:scale-95"
                     >
-                        Login
+                       {user? 'Logout': 'Login'}
                     </button>
                 </div>
 

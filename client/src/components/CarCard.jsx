@@ -1,11 +1,12 @@
 import React from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 
 const CarCard = ({ car }) => {
     const currency = import.meta.env.currency || '₹';
     const Navigate = useNavigate();
-
+const {cars}=useAppContext();
     return (
         <div className='group relative bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl cursor-pointer border border-gray-100/50 hover:border-white/60'>
             {/* Image Section with Enhanced Overlay */}
@@ -24,7 +25,7 @@ const CarCard = ({ car }) => {
                 
                 {/* Price Badge with Glassmorphism */}
                 <div className='absolute bottom-4 right-4 bg-white/20 backdrop-blur-md border border-white/30 text-white px-4 py-2.5 rounded-xl shadow-lg group-hover:bg-white/30 transition-all duration-300'>
-                    <span className='font-semibold text-lg'>{currency}{car.pricePerDay}</span>
+                    <span className='font-semibold text-lg'>{currency}{car.price_per_day}</span>
                     <span className='text-sm text-white/90 font-light'> / day</span>
                 </div>
                 

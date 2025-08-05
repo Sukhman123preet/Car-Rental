@@ -3,10 +3,12 @@ import Title from "./Title";
 import CarCard from "./CarCard";
 import { dummyCarData, assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 
 const FeaturedSection = () => {
   const Navigate = useNavigate();
-
+  const {cars}=useAppContext();
+  
   return (
     <section className="w-full bg-white relative z-10">
       <div className="flex flex-col items-center px-4 py-16 md:py-20 lg:py-24 max-w-7xl mx-auto">
@@ -20,7 +22,7 @@ const FeaturedSection = () => {
 
         {/* Cars Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full">
-          {dummyCarData.slice(0, 6).map((car) => (
+          {cars.slice(0, 6).map((car) => (
             <div key={car._id} className="transform transition-transform duration-300 hover:scale-105">
               <CarCard car={car} />
             </div>

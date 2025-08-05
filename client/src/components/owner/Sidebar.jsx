@@ -2,27 +2,39 @@ import React, { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { assets, dummyUserData, ownerMenuLinks } from "../../assets/assets";
 
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
+
 const Sidebar = () => {
-  const user = dummyUserData;
+  const { user, axios, fetchUser } = useAppContext();
   const location = useLocation();
   const [image, setImage] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); // ✅ fix
 
   const updateImage = async () => {
-    if (image) {
-      setIsUploading(true);
-      // Simulate upload delay
-      setTimeout(() => {
-        user.image = URL.createObjectURL(image);
-        setImage('');
-        setIsUploading(false);
-      }, 500);
+    try {
+      setIsUploading(true); // start upload
+      const formData = new FormData();
+      formData.append('image', image);
+      const { data } = await axios.post('/api/owner/update-image', formData);
+  
+      if (data.success) {
+        fetchUser();
+        toast.success(data.message);
+        setImage(data.img_link);
+      } else {
+        toast.error(data.message || "Upload failed.");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsUploading(false); // end upload
     }
   };
 
   return (
     <div className='relative min-h-screen md:flex flex-col items-center pt-8 max-w-16 md:max-w-72 w-full bg-gradient-to-b from-white to-gray-50/50 border-r border-gray-200/60 backdrop-blur-sm shadow-lg'>
-      
+
       {/* Profile Section */}
       <div className='flex flex-col items-center mb-8'>
         {/* Profile Image Upload */}
@@ -30,14 +42,15 @@ const Sidebar = () => {
           <label htmlFor="image" className='cursor-pointer'>
             <div className='relative'>
               <img
-                className="h-12 w-12 rounded-full object-cover mx-auto cursor-pointer md:h-20 md:w-20 ring-4 ring-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
-                src={
-                  image
-                    ? URL.createObjectURL(image)
-                    : user?.image || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=300"
-                }
-                alt="user avatar"
-              />
+  className="h-12 w-12 rounded-full object-cover mx-auto cursor-pointer md:h-20 md:w-20 ring-4 ring-white shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+  src={
+    image instanceof File
+      ? URL.createObjectURL(image)
+      : user?.image || "https://cdn.pixabay.com/photo/2018/04/18/18/56/user-3331256_1280.png"
+  }
+  alt="user avatar"
+/>
+
               <input
                 type="file"
                 id="image"
@@ -84,7 +97,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="w-full lg:px-3 flex-1  ">
+      <nav className="w-full lg:px-3 flex-1">
         <div className="space-y-2">
           {ownerMenuLinks.map((link, index) => (
             <NavLink
@@ -110,12 +123,12 @@ const Sidebar = () => {
               <span className='max-md:hidden font-medium transition-all duration-300'>
                 {link.name}
               </span>
-              
+
               {/* Active Indicator */}
               {link.path === location.pathname && (
                 <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-l-full shadow-sm"></div>
               )}
-              
+
               {/* Hover Effect */}
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent to-blue-50/30 opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
             </NavLink>
